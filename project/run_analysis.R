@@ -102,9 +102,10 @@ activityLookup <- function() {
 
 ## Appropriately label the data set with descriptive variable names
 getFeatureColumnNames <- function(features = PATTERN) {
-    make.names(
-        featureLookup(features)$feature_desc[
-            featureLookup(features)$feature_class == "numeric"])
+    gsub("..", "",
+         make.names(featureLookup(features)$feature_desc[
+             featureLookup(features)$feature_class == "numeric"]),
+        fixed = TRUE)
 }
 
 ## Create an independent tidy data set with
@@ -118,7 +119,8 @@ createTidyDataSet <- function() {
     
     query <- paste0(
         "SELECT subject_id, activity_desc",
-        paste0(", avg(`", getFeatureColumnNames(PATTERN), "`)", collapse = ""),
+        paste0(", avg(`", getFeatureColumnNames(PATTERN), "`) AS 'avg_",
+               getFeatureColumnNames(PATTERN), "'", collapse = ""),
         " FROM data_m GROUP BY subject_id, activity_desc"
     )
     
